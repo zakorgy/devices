@@ -5,4 +5,4 @@ authors = ["The Servo Project Developers"]
 
 [dependencies.blurz]
 git = "https://github.com/dati91/blurz"
-
+rev = "f1e8d89"
