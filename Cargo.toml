@@ -3,6 +3,5 @@ name = "device"
 version = "0.0.1"
 authors = ["The Servo Project Developers"]
 
-[dependencies.blurz]
-git = "https://github.com/dati91/blurz"
-rev = "f1e8d89"
+[dependencies]
+blurz = "0.1.3"
