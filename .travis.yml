@@ -1,8 +1,11 @@
 language: rust
+sudo: required
+dist: trusty
 notifications:
   webhooks: http://build.servo.org:54856/travis
 
 script:
+  - sudo apt-get install libdbus-1-dev
   - cargo build
   - cargo test
 
