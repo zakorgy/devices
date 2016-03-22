@@ -481,6 +481,10 @@ impl BluetoothGATTDescriptor {
         }
     }
 
+    pub fn get_object_path(&self) -> String {
+        self.get_gatt_descriptor().get_object_path()
+    }
+
     #[cfg(target_os = "linux")]
     pub fn create_descriptor(descriptor: String) -> BluetoothGATTDescriptor {
         BluetoothGATTDescriptor::new(
