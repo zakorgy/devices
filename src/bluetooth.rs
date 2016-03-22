@@ -446,8 +446,13 @@ impl BluetoothGATTCharacteristic {
         self.get_gatt_characteristic().get_flags().unwrap_or(vec!())
     }
 
-    pub fn get_descriptors(&self) -> Vec<String> {
-        self.get_gatt_characteristic().get_descriptors().unwrap_or(vec!())
+    pub fn get_descriptors(&self) -> Vec<BluetoothGATTDescriptor> {
+        let descriptors =  self.get_gatt_characteristic().get_descriptors().unwrap_or(vec!());
+        let mut v: Vec<BluetoothGATTDescriptor> = Vec::new();
+        for descriptor in descriptors {
+            v.push(BluetoothGATTDescriptor::create_descriptor(descriptor.clone()));
+        }
+        v
     }
 
     pub fn read_value(&self) -> Vec<u8> {
