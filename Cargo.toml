@@ -4,4 +4,4 @@ version = "0.0.1"
 authors = ["The Servo Project Developers"]
 
 [dependencies]
-blurz = "0.1.3"
+blurz = "0.1.4"
