@@ -81,18 +81,14 @@ impl BluetoothAdapter {
 
     pub fn get_devices(&mut self) -> Result<Vec<BluetoothDevice>, Box<Error>> {
         let device_list = try!(self.get_adapter().get_device_list());
-        let mut devices = Vec::new();
-        for device in device_list {
-            devices.push(self.create_device(device.clone()));
-        }
-        Ok(devices)
+        Ok(device_list.into_iter().map(|device| self.create_device(device)).collect())
     }
 
     pub fn get_device(&mut self, address: String) -> Result<Option<BluetoothDevice>, Box<Error>> {
         let devices = try!(self.get_devices());
         for device in devices {
             if try!(device.get_address()) == address {
-                return Ok(Some(device.clone()));
+                return Ok(Some(device));
             }
         }
         Ok(None)
@@ -290,11 +286,7 @@ impl BluetoothDevice {
 
     pub fn get_gatt_services(&self) -> Result<Vec<BluetoothGATTService>, Box<Error>> {
         let services = try!(self.get_device().get_gatt_services());
-        let mut v: Vec<BluetoothGATTService> = Vec::new();
-        for service in services {
-            v.push(BluetoothGATTService::create_service(service.clone()));
-        }
-        Ok(v)
+        Ok(services.into_iter().map(|service| BluetoothGATTService::create_service(service)).collect())
     }
 
     pub fn connect(&self) -> Result<(), Box<Error>> {
@@ -360,11 +352,7 @@ impl BluetoothGATTService {
 
     pub fn get_gatt_characteristics(&self) -> Result<Vec<BluetoothGATTCharacteristic>, Box<Error>> {
         let characteristics = try!(self.get_gatt_service().get_gatt_characteristics());
-        let mut v: Vec<BluetoothGATTCharacteristic> = Vec::new();
-        for characteristic in characteristics {
-            v.push(BluetoothGATTCharacteristic::create_characteristic(characteristic.clone()));
-        }
-        Ok(v)
+        Ok(characteristics.into_iter().map(|characteristic| BluetoothGATTCharacteristic::create_characteristic(characteristic)).collect())
     }
 }
 
@@ -414,11 +402,7 @@ impl BluetoothGATTCharacteristic {
 
     pub fn get_gatt_descriptors(&self) -> Result<Vec<BluetoothGATTDescriptor>, Box<Error>> {
         let descriptors =  try!(self.get_gatt_characteristic().get_gatt_descriptors());
-        let mut v: Vec<BluetoothGATTDescriptor> = Vec::new();
-        for descriptor in descriptors {
-            v.push(BluetoothGATTDescriptor::create_descriptor(descriptor.clone()));
-        }
-        Ok(v)
+        Ok(descriptors.into_iter().map(|descriptor| BluetoothGATTDescriptor::create_descriptor(descriptor)).collect())
     }
 
     pub fn read_value(&self) -> Result<Vec<u8>, Box<Error>> {
