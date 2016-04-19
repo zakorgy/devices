@@ -181,6 +181,14 @@ impl BluetoothAdapter {
     pub fn get_modalias(&self) -> Result<(String, u32, u32, u32), Box<Error>> {
         self.get_adapter().get_modalias()
     }
+
+    pub fn start_discovery(&self) -> Result<(), Box<Error>> {
+        self.get_adapter().start_discovery()
+    }
+
+    pub fn stop_discovery(&self) -> Result<(), Box<Error>> {
+        self.get_adapter().stop_discovery()
+    }
 }
 
 impl BluetoothDevice {
