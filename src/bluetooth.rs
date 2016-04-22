@@ -75,16 +75,16 @@ impl BluetoothAdapter {
     }
 
     #[cfg(target_os = "linux")]
-    fn create_device(&mut self, object_path: String)  -> BluetoothDevice {
+    fn create_device(&self, object_path: String)  -> BluetoothDevice {
         BluetoothDevice::new(BluetoothDeviceBluez::create_device(object_path))
     }
 
-    pub fn get_devices(&mut self) -> Result<Vec<BluetoothDevice>, Box<Error>> {
+    pub fn get_devices(&self) -> Result<Vec<BluetoothDevice>, Box<Error>> {
         let device_list = try!(self.get_adapter().get_device_list());
         Ok(device_list.into_iter().map(|device| self.create_device(device)).collect())
     }
 
-    pub fn get_device(&mut self, address: String) -> Result<Option<BluetoothDevice>, Box<Error>> {
+    pub fn get_device(&self, address: String) -> Result<Option<BluetoothDevice>, Box<Error>> {
         let devices = try!(self.get_devices());
         for device in devices {
             if try!(device.get_address()) == address {
