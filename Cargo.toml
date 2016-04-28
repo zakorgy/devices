@@ -3,14 +3,5 @@ name = "device"
 version = "0.0.1"
 authors = ["The Servo Project Developers"]
 
-[target.i686-unknown-linux-gnu.dependencies]
-blurz = "0.1.5"
-
-[target.x86_64-unknown-linux-gnu.dependencies]
-blurz = "0.1.5"
-
-[target.arm-unknown-linux-gnueabihf.dependencies]
-blurz = "0.1.5"
-
-[target.aarch64-unknown-linux-gnu.dependencies]
+[target.'cfg(target_os = "linux")'.dependencies]
 blurz = "0.1.5"
