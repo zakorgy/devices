@@ -3,5 +3,5 @@ name = "device"
 version = "0.0.1"
 authors = ["The Servo Project Developers"]
 
-[dependencies]
-blurz = "0.1.4"
+[target.'cfg(target_os = "linux")'.dependencies]
+blurz = "0.1.5"
