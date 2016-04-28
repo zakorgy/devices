@@ -200,6 +200,14 @@ impl BluetoothAdapter {
         String::new()
     }
 
+    pub fn get_devices(&self) -> Result<Vec<BluetoothDevice>, Box<Error>> {
+        Err(Box::from(NOT_SUPPORTED_ERROR))
+    }
+
+    pub fn get_device(&self, _address: String) -> Result<Option<BluetoothDevice>, Box<Error>> {
+        Err(Box::from(NOT_SUPPORTED_ERROR))
+    }
+
     pub fn get_address(&self) -> Result<String, Box<Error>> {
         Err(Box::from(NOT_SUPPORTED_ERROR))
     }
