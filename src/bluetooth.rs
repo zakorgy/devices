@@ -12,6 +12,8 @@ use blurz::bluetooth_gatt_characteristic::BluetoothGATTCharacteristic as Bluetoo
 use blurz::bluetooth_gatt_descriptor::BluetoothGATTDescriptor as BluetoothGATTDescriptorBluez;
 #[cfg(target_os = "linux")]
 use blurz::bluetooth_gatt_service::BluetoothGATTService as BluetoothGATTServiceBluez;
+#[cfg(target_os = "linux")]
+use blurz::bluetooth_discovery_session::BluetoothDiscoverySession as BluetoothDiscoverySessionBluez;
 
 use std::error::Error;
 
@@ -46,6 +48,49 @@ pub struct BluetoothGATTCharacteristic {
 pub struct BluetoothGATTDescriptor {
     #[cfg(target_os = "linux")]
     gatt_descriptor: BluetoothGATTDescriptorBluez,
+}
+
+#[derive(Debug)]
+pub struct BluetoothDiscoverySession {
+    #[cfg(target_os = "linux")]
+    session: BluetoothDiscoverySessionBluez,
+}
+
+#[cfg(target_os = "linux")]
+impl BluetoothDiscoverySession {
+    pub fn create_session(adapter: String) -> Result<BluetoothDiscoverySession, Box<Error>> {
+        let bluez_session = try!(BluetoothDiscoverySessionBluez::create_session(adapter));
+        Ok(BluetoothDiscoverySession::new(bluez_session))
+    }
+
+    fn new(session: BluetoothDiscoverySessionBluez) -> BluetoothDiscoverySession {
+        BluetoothDiscoverySession {
+            session: session,
+        }
+    }
+
+    pub fn start_discovery(&self) -> Result<(), Box<Error>> {
+        self.session.start_discovery()
+    }
+
+    pub fn stop_discovery(&self) -> Result<(), Box<Error>> {
+        self.session.stop_discovery()
+    }
+}
+
+#[cfg(not(target_os = "linux"))]
+impl BluetoothDiscoverySession {
+    pub fn create_session(_adapter: String) -> Result<BluetoothDiscoverySession, Box<Error>> {
+        Err(Box::from(NOT_SUPPORTED_ERROR))
+    }
+
+    pub fn start_discovery(&self) -> Result<(), Box<Error>> {
+        Err(Box::from(NOT_SUPPORTED_ERROR))
+    }
+
+    pub fn stop_discovery(&self) -> Result<(), Box<Error>> {
+        Err(Box::from(NOT_SUPPORTED_ERROR))
+    }
 }
 
 #[cfg(target_os = "linux")]
@@ -175,14 +220,6 @@ impl BluetoothAdapter {
 
     pub fn get_modalias(&self) -> Result<(String, u32, u32, u32), Box<Error>> {
         self.get_adapter().get_modalias()
-    }
-
-    pub fn start_discovery(&self) -> Result<(), Box<Error>> {
-        self.get_adapter().start_discovery()
-    }
-
-    pub fn stop_discovery(&self) -> Result<(), Box<Error>> {
-        self.get_adapter().stop_discovery()
     }
 }
 
