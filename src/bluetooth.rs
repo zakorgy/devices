@@ -634,6 +634,11 @@ impl BluetoothGATTService {
         self.get_gatt_service().get_device()
     }
 
+    pub fn get_includes(&self) -> Result<Vec<BluetoothGATTService>, Box<Error>> {
+        let services = try!(self.get_gatt_service().get_includes());
+        Ok(services.into_iter().map(|service| BluetoothGATTService::create_service(service)).collect())
+    }
+
     pub fn get_gatt_characteristics(&self) -> Result<Vec<BluetoothGATTCharacteristic>, Box<Error>> {
         let characteristics = try!(self.get_gatt_service().get_gatt_characteristics());
         Ok(characteristics.into_iter().map(|characteristic| BluetoothGATTCharacteristic::create_characteristic(characteristic)).collect())
@@ -659,6 +664,10 @@ impl BluetoothGATTService {
     }
 
     pub fn get_device(&self) -> Result<String, Box<Error>> {
+        Err(Box::from(NOT_SUPPORTED_ERROR))
+    }
+
+    pub fn get_includes(&self) -> Result<Vec<BluetoothGATTService>, Box<Error>> {
         Err(Box::from(NOT_SUPPORTED_ERROR))
     }
 
