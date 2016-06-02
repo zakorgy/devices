@@ -3,5 +3,9 @@ name = "device"
 version = "0.0.1"
 authors = ["The Servo Project Developers"]
 
+[features]
+default = ["bluetooth"]
+bluetooth = ["blurz"]
+
 [target.'cfg(target_os = "linux")'.dependencies]
-blurz = "0.1.7"
+blurz = { version = "0.1.7", optional = true }
