@@ -2,61 +2,61 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 use blurz::bluetooth_adapter::BluetoothAdapter as BluetoothAdapterBluez;
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 use blurz::bluetooth_device::BluetoothDevice as BluetoothDeviceBluez;
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 use blurz::bluetooth_gatt_characteristic::BluetoothGATTCharacteristic as BluetoothGATTCharacteristicBluez;
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 use blurz::bluetooth_gatt_descriptor::BluetoothGATTDescriptor as BluetoothGATTDescriptorBluez;
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 use blurz::bluetooth_gatt_service::BluetoothGATTService as BluetoothGATTServiceBluez;
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 use blurz::bluetooth_discovery_session::BluetoothDiscoverySession as BluetoothDiscoverySessionBluez;
 
 use std::error::Error;
 
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(all(target_os = "linux", feature = "bluetooth")))]
 const NOT_SUPPORTED_ERROR: &'static str = "Error! Not supported platform!";
 
 #[derive(Clone, Debug)]
 pub struct BluetoothAdapter {
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "bluetooth"))]
     adapter: BluetoothAdapterBluez,
 }
 
 #[derive(Clone, Debug)]
 pub struct BluetoothDevice {
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "bluetooth"))]
     device: BluetoothDeviceBluez,
 }
 
 #[derive(Clone, Debug)]
 pub struct BluetoothGATTService {
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "bluetooth"))]
     gatt_service: BluetoothGATTServiceBluez,
 }
 
 #[derive(Clone, Debug)]
 pub struct BluetoothGATTCharacteristic {
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "bluetooth"))]
     gatt_characteristic: BluetoothGATTCharacteristicBluez,
 }
 
 #[derive(Clone, Debug)]
 pub struct BluetoothGATTDescriptor {
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "bluetooth"))]
     gatt_descriptor: BluetoothGATTDescriptorBluez,
 }
 
 #[derive(Debug)]
 pub struct BluetoothDiscoverySession {
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "bluetooth"))]
     session: BluetoothDiscoverySessionBluez,
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 impl BluetoothDiscoverySession {
     pub fn create_session(adapter: String) -> Result<BluetoothDiscoverySession, Box<Error>> {
         let bluez_session = try!(BluetoothDiscoverySessionBluez::create_session(adapter));
@@ -78,7 +78,7 @@ impl BluetoothDiscoverySession {
     }
 }
 
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(all(target_os = "linux", feature = "bluetooth")))]
 impl BluetoothDiscoverySession {
     pub fn create_session(_adapter: String) -> Result<BluetoothDiscoverySession, Box<Error>> {
         Err(Box::from(NOT_SUPPORTED_ERROR))
@@ -93,7 +93,7 @@ impl BluetoothDiscoverySession {
     }
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 impl BluetoothAdapter {
     pub fn init() -> Result<BluetoothAdapter, Box<Error>> {
         let bluez_adapter = try!(BluetoothAdapterBluez::init());
@@ -223,7 +223,7 @@ impl BluetoothAdapter {
     }
 }
 
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(all(target_os = "linux", feature = "bluetooth")))]
 impl BluetoothAdapter {
     pub fn init() -> Result<BluetoothAdapter, Box<Error>> {
         Err(Box::from(NOT_SUPPORTED_ERROR))
@@ -342,7 +342,7 @@ impl BluetoothAdapter {
     }
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 impl BluetoothDevice {
     fn new(device: BluetoothDeviceBluez) -> BluetoothDevice {
         BluetoothDevice {
@@ -477,7 +477,7 @@ impl BluetoothDevice {
     }
 }
 
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(all(target_os = "linux", feature = "bluetooth")))]
 impl BluetoothDevice {
     pub fn create_device(_device: String) -> BluetoothDevice {
         BluetoothDevice { }
@@ -600,7 +600,7 @@ impl BluetoothDevice {
     }
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 impl BluetoothGATTService {
     fn new(gatt_service: BluetoothGATTServiceBluez)
            -> BluetoothGATTService {
@@ -645,7 +645,7 @@ impl BluetoothGATTService {
     }
 }
 
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(all(target_os = "linux", feature = "bluetooth")))]
 impl BluetoothGATTService {
     pub fn create_service(_service: String) -> BluetoothGATTService {
         BluetoothGATTService { }
@@ -676,7 +676,7 @@ impl BluetoothGATTService {
     }
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 impl BluetoothGATTCharacteristic {
     fn new(gatt_characteristic: BluetoothGATTCharacteristicBluez)
            -> BluetoothGATTCharacteristic {
@@ -740,7 +740,7 @@ impl BluetoothGATTCharacteristic {
     }
 }
 
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(all(target_os = "linux", feature = "bluetooth")))]
 impl BluetoothGATTCharacteristic {
     pub fn create_characteristic(_characteristic: String) -> BluetoothGATTCharacteristic {
         BluetoothGATTCharacteristic { }
@@ -791,7 +791,7 @@ impl BluetoothGATTCharacteristic {
     }
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "bluetooth"))]
 impl BluetoothGATTDescriptor {
     fn new(gatt_descriptor: BluetoothGATTDescriptorBluez)
            -> BluetoothGATTDescriptor {
@@ -838,7 +838,7 @@ impl BluetoothGATTDescriptor {
     }
 }
 
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(all(target_os = "linux", feature = "bluetooth")))]
 impl BluetoothGATTDescriptor {
     pub fn create_descriptor(_descriptor: String) -> BluetoothGATTDescriptor {
         BluetoothGATTDescriptor { }
