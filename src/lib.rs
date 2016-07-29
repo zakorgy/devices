@@ -6,4 +6,5 @@
 extern crate blurz;
 
 pub mod bluetooth;
-
+#[cfg(not(all(target_os = "linux", feature = "bluetooth")))]
+mod empty;
