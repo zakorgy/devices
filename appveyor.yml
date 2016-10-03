@@ -10,7 +10,8 @@ install:
   - rustc -V
   - cargo -V
 
-build: false
+build_script:
+  - cargo build --features bluetooth-test
 
 test_script:
 - cargo test --verbose
