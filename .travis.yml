@@ -6,6 +6,6 @@ notifications:
 
 script:
   - sudo apt-get install libdbus-1-dev
-  - cargo build
+  - cargo build --features bluetooth-test
   - cargo test
 
