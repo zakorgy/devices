@@ -707,7 +707,10 @@ impl BluetoothGATTService {
 
     pub fn get_gatt_characteristics(&self) -> Result<Vec<BluetoothGATTCharacteristic>, Box<Error>> {
         let characteristics = try!(get_inner_and_call!(self, BluetoothGATTService, get_gatt_characteristics));
-        Ok(characteristics.into_iter().map(|characteristic| BluetoothGATTCharacteristic::create_characteristic(self.clone(), characteristic)).collect())
+        Ok(characteristics.into_iter()
+                          .map(|characteristic|
+                              BluetoothGATTCharacteristic::create_characteristic(self.clone(), characteristic))
+                          .collect())
     }
 }
 
@@ -720,7 +723,8 @@ impl BluetoothGATTCharacteristic {
             },
             #[cfg(all(target_os = "android", feature = "bluetooth"))]
             BluetoothGATTService::Android(android_service) => {
-                BluetoothGATTCharacteristic::Android(Arc::new(BluetoothGATTCharacteristicAndroid::new(android_service, characteristic)))
+                BluetoothGATTCharacteristic::Android(
+                    Arc::new(BluetoothGATTCharacteristicAndroid::new(android_service, characteristic)))
             },
             #[cfg(not(any(all(target_os = "linux", feature = "bluetooth"), all(target_os = "android", feature = "bluetooth"))))]
             BluetoothGATTService::Empty(_service) => {
@@ -728,7 +732,8 @@ impl BluetoothGATTCharacteristic {
             },
             #[cfg(feature = "bluetooth-test")]
             BluetoothGATTService::Mock(fake_service) => {
-                BluetoothGATTCharacteristic::Mock(FakeBluetoothGATTCharacteristic::new_empty(fake_service, characteristic))
+                BluetoothGATTCharacteristic::Mock(
+                    FakeBluetoothGATTCharacteristic::new_empty(fake_service, characteristic))
             },
         }
     }
@@ -783,7 +788,9 @@ impl BluetoothGATTCharacteristic {
 
     pub fn get_gatt_descriptors(&self) -> Result<Vec<BluetoothGATTDescriptor>, Box<Error>> {
         let descriptors = try!(get_inner_and_call!(self, BluetoothGATTCharacteristic, get_gatt_descriptors));
-        Ok(descriptors.into_iter().map(|descriptor| BluetoothGATTDescriptor::create_descriptor(self.clone(), descriptor)).collect())
+        Ok(descriptors.into_iter()
+                      .map(|descriptor| BluetoothGATTDescriptor::create_descriptor(self.clone(), descriptor))
+                      .collect())
     }
 
     pub fn read_value(&self) -> Result<Vec<u8>, Box<Error>> {
@@ -812,7 +819,8 @@ impl BluetoothGATTDescriptor {
             },
             #[cfg(all(target_os = "android", feature = "bluetooth"))]
             BluetoothGATTCharacteristic::Android(android_characteristic) => {
-                BluetoothGATTDescriptor::Android(Arc::new(BluetoothGATTDescriptorAndroid::new(android_characteristic, descriptor)))
+                BluetoothGATTDescriptor::Android(
+                    Arc::new(BluetoothGATTDescriptorAndroid::new(android_characteristic, descriptor)))
             },
             #[cfg(not(any(all(target_os = "linux", feature = "bluetooth"), all(target_os = "android", feature = "bluetooth"))))]
             BluetoothGATTCharacteristic::Empty(_characteristic) => {
