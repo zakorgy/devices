@@ -55,7 +55,9 @@ use std::sync::Arc;
 use std::error::Error;
 
 #[cfg(feature = "bluetooth-test")]
-const NOT_SUPPORTED_ERROR: &'static str = "Error! Not supported function!";
+const NOT_SUPPORTED_ON_REAL_ERROR: &'static str = "Error! Test functions are not supported on real devices!";
+#[cfg(feature = "bluetooth-test")]
+const NOT_SUPPORTED_ON_MOCK_ERROR: &'static str = "Error! The first parameter must be a mock structure!";
 
 #[derive(Clone, Debug)]
 pub enum BluetoothAdapter {
@@ -162,14 +164,14 @@ macro_rules! get_inner_and_call_test_func {
     ($enum_value: expr, $enum_type: ident, $function_name: ident, $value: expr) => {
         match $enum_value {
             &$enum_type::Mock(ref fake) => fake.$function_name($value),
-            _ => Err(Box::from(NOT_SUPPORTED_ERROR)),
+            _ => Err(Box::from(NOT_SUPPORTED_ON_REAL_ERROR)),
         }
     };
 
     ($enum_value: expr, $enum_type: ident, $function_name: ident) => {
         match $enum_value {
             &$enum_type::Mock(ref fake) => fake.$function_name(),
-            _ => Err(Box::from(NOT_SUPPORTED_ERROR)),
+            _ => Err(Box::from(NOT_SUPPORTED_ON_REAL_ERROR)),
         }
     };
 }
@@ -233,7 +235,7 @@ impl BluetoothAdapter {
     pub fn set_address(&self, address: String) -> Result<(), Box<Error>> {
         match self {
             &BluetoothAdapter::Mock(ref fake_adapter) => fake_adapter.set_address(address),
-            _ => Err(Box::from(NOT_SUPPORTED_ERROR)),
+            _ => Err(Box::from(NOT_SUPPORTED_ON_REAL_ERROR)),
         }
     }
 
@@ -388,7 +390,7 @@ impl BluetoothAdapter {
 }
 
 impl BluetoothDiscoverySession {
-    pub fn create_session(adapter: BluetoothAdapter) -> Result<BluetoothDiscoverySession, Box<Error>> {
+    fn create_session(adapter: BluetoothAdapter) -> Result<BluetoothDiscoverySession, Box<Error>> {
         match adapter {
             #[cfg(all(target_os = "linux", feature = "bluetooth"))]
             BluetoothAdapter::Bluez(bluez_adapter) => {
@@ -424,7 +426,7 @@ impl BluetoothDiscoverySession {
 
 impl BluetoothDevice {
 
-    pub fn create_device(adapter: BluetoothAdapter, device: String) -> BluetoothDevice {
+    fn create_device(adapter: BluetoothAdapter, device: String) -> BluetoothDevice {
         match adapter {
             #[cfg(all(target_os = "linux", feature = "bluetooth"))]
             BluetoothAdapter::Bluez(_bluez_adapter) => {
@@ -441,6 +443,18 @@ impl BluetoothDevice {
             #[cfg(feature = "bluetooth-test")]
             BluetoothAdapter::Mock(fake_adapter) => {
                 BluetoothDevice::Mock(FakeBluetoothDevice::new_empty(fake_adapter, device))
+            },
+        }
+    }
+
+    #[cfg(feature = "bluetooth-test")]
+    pub fn create_mock_device(adapter: BluetoothAdapter, device: String) -> Result<BluetoothDevice, Box<Error>> {
+        match adapter {
+            BluetoothAdapter::Mock(fake_adapter) => {
+                Ok(BluetoothDevice::Mock(FakeBluetoothDevice::new_empty(fake_adapter, device)))
+            },
+            _ => {
+                Err(Box::from(NOT_SUPPORTED_ON_MOCK_ERROR))
             },
         }
     }
@@ -649,7 +663,7 @@ impl BluetoothDevice {
 }
 
 impl BluetoothGATTService {
-    pub fn create_service(device: BluetoothDevice, service: String) -> BluetoothGATTService {
+    fn create_service(device: BluetoothDevice, service: String) -> BluetoothGATTService {
         match device {
             #[cfg(all(target_os = "linux", feature = "bluetooth"))]
             BluetoothDevice::Bluez(_bluez_device) => {
@@ -666,6 +680,18 @@ impl BluetoothGATTService {
             #[cfg(feature = "bluetooth-test")]
             BluetoothDevice::Mock(fake_device) => {
                 BluetoothGATTService::Mock(FakeBluetoothGATTService::new_empty(fake_device, service))
+            },
+        }
+    }
+
+    #[cfg(feature = "bluetooth-test")]
+    pub fn create_mock_service(device: BluetoothDevice, service: String) -> Result<BluetoothGATTService, Box<Error>> {
+        match device {
+            BluetoothDevice::Mock(fake_device) => {
+                Ok(BluetoothGATTService::Mock(FakeBluetoothGATTService::new_empty(fake_device, service)))
+            },
+            _ => {
+                Err(Box::from(NOT_SUPPORTED_ON_MOCK_ERROR))
             },
         }
     }
@@ -715,7 +741,7 @@ impl BluetoothGATTService {
 }
 
 impl BluetoothGATTCharacteristic {
-    pub fn create_characteristic(service: BluetoothGATTService, characteristic: String) -> BluetoothGATTCharacteristic {
+    fn create_characteristic(service: BluetoothGATTService, characteristic: String) -> BluetoothGATTCharacteristic {
         match service {
             #[cfg(all(target_os = "linux", feature = "bluetooth"))]
             BluetoothGATTService::Bluez(_bluez_service) => {
@@ -734,6 +760,21 @@ impl BluetoothGATTCharacteristic {
             BluetoothGATTService::Mock(fake_service) => {
                 BluetoothGATTCharacteristic::Mock(
                     FakeBluetoothGATTCharacteristic::new_empty(fake_service, characteristic))
+            },
+        }
+    }
+
+    #[cfg(feature = "bluetooth-test")]
+    pub fn create_mock_characteristic(service: BluetoothGATTService,
+                                      characteristic: String)
+                                      -> Result<BluetoothGATTCharacteristic, Box<Error>> {
+        match service {
+            BluetoothGATTService::Mock(fake_service) => {
+                Ok(BluetoothGATTCharacteristic::Mock(
+                    FakeBluetoothGATTCharacteristic::new_empty(fake_service, characteristic)))
+            },
+            _ => {
+                Err(Box::from(NOT_SUPPORTED_ON_MOCK_ERROR))
             },
         }
     }
@@ -811,7 +852,7 @@ impl BluetoothGATTCharacteristic {
 }
 
 impl BluetoothGATTDescriptor {
-    pub fn create_descriptor(characteristic: BluetoothGATTCharacteristic, descriptor: String) -> BluetoothGATTDescriptor {
+    fn create_descriptor(characteristic: BluetoothGATTCharacteristic, descriptor: String) -> BluetoothGATTDescriptor {
         match characteristic {
             #[cfg(all(target_os = "linux", feature = "bluetooth"))]
             BluetoothGATTCharacteristic::Bluez(_bluez_characteristic) => {
@@ -829,6 +870,21 @@ impl BluetoothGATTDescriptor {
             #[cfg(feature = "bluetooth-test")]
             BluetoothGATTCharacteristic::Mock(fake_characteristic) => {
                 BluetoothGATTDescriptor::Mock(FakeBluetoothGATTDescriptor::new_empty(fake_characteristic, descriptor))
+            },
+        }
+    }
+
+    #[cfg(feature = "bluetooth-test")]
+    pub fn create_mock_descriptor(characteristic: BluetoothGATTCharacteristic,
+                                  descriptor: String)
+                                  -> Result<BluetoothGATTDescriptor, Box<Error>> {
+        match characteristic {
+            BluetoothGATTCharacteristic::Mock(fake_characteristic) => {
+                Ok(BluetoothGATTDescriptor::Mock(
+                    FakeBluetoothGATTDescriptor::new_empty(fake_characteristic, descriptor)))
+            },
+            _ => {
+                Err(Box::from(NOT_SUPPORTED_ON_MOCK_ERROR))
             },
         }
     }
