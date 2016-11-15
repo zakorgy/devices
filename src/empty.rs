@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+use std::collections::HashMap;
 use std::error::Error;
 use std::sync::Arc;
 
@@ -222,6 +223,14 @@ impl BluetoothDevice {
     }
 
     pub fn get_tx_power(&self) -> Result<i16, Box<Error>> {
+        Err(Box::from(NOT_SUPPORTED_ERROR))
+    }
+
+    pub fn get_manufacturer_data(&self) -> Result<HashMap<u16, Vec<u8>>, Box<Error>> {
+        Err(Box::from(NOT_SUPPORTED_ERROR))
+    }
+
+    pub fn get_service_data(&self) -> Result<HashMap<String, Vec<u8>>, Box<Error>> {
         Err(Box::from(NOT_SUPPORTED_ERROR))
     }
 
