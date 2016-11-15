@@ -51,6 +51,7 @@ use empty::BluetoothDiscoverySession as BluetoothDiscoverySessionEmpty;
 #[cfg(feature = "bluetooth-test")]
 use blurmock::fake_discovery_session::FakeBluetoothDiscoverySession;
 
+use std::collections::HashMap;
 use std::sync::Arc;
 use std::error::Error;
 
@@ -630,6 +631,14 @@ impl BluetoothDevice {
     #[cfg(feature = "bluetooth-test")]
     pub fn set_tx_power(&self, tx_power: i16) -> Result<(), Box<Error>> {
         get_inner_and_call_test_func!(self, BluetoothDevice, set_tx_power, Some(tx_power))
+    }
+
+    pub fn get_manufacturer_data(&self) -> Result<HashMap<u16, Vec<u8>>, Box<Error>> {
+        get_inner_and_call!(self, BluetoothDevice, get_manufacturer_data)
+    }
+
+    pub fn get_service_data(&self) -> Result<HashMap<String, Vec<u8>>, Box<Error>> {
+        get_inner_and_call!(self, BluetoothDevice, get_service_data)
     }
 
     pub fn get_gatt_services(&self) -> Result<Vec<BluetoothGATTService>, Box<Error>> {
