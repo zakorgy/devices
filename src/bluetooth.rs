@@ -637,8 +637,18 @@ impl BluetoothDevice {
         get_inner_and_call!(self, BluetoothDevice, get_manufacturer_data)
     }
 
+    #[cfg(feature = "bluetooth-test")]
+    pub fn set_manufacturer_data(&self, manufacturer_data: HashMap<u16, Vec<u8>>) -> Result<(), Box<Error>> {
+        get_inner_and_call_test_func!(self, BluetoothDevice, set_manufacturer_data, Some(manufacturer_data))
+    }
+
     pub fn get_service_data(&self) -> Result<HashMap<String, Vec<u8>>, Box<Error>> {
         get_inner_and_call!(self, BluetoothDevice, get_service_data)
+    }
+
+    #[cfg(feature = "bluetooth-test")]
+    pub fn set_service_data(&self, service_data: HashMap<String, Vec<u8>>) -> Result<(), Box<Error>> {
+        get_inner_and_call_test_func!(self, BluetoothDevice, set_service_data, Some(service_data))
     }
 
     pub fn get_gatt_services(&self) -> Result<Vec<BluetoothGATTService>, Box<Error>> {
