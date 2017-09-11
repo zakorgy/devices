@@ -11,6 +11,7 @@ Underlying dependency crates:
 
 - Android platform: [blurdroid](https://crates.io/crates/blurdroid)
 - Linux platform: [blurz](https://crates.io/crates/blurz)
+- MacOS platform: [blurmac](https://crates.io/crates/blurmac)
 - `Fake` prefixed structures: [blurmock](https://crates.io/crates/blurmock)
 
 `Empty` prefixed structures are located in `empty.rs`.
@@ -18,7 +19,7 @@ Underlying dependency crates:
 ### Usage
 
 #### Without the *bluetooth-test* feature
-There are two supported platforms (Android, Linux), on other platforms we fall back to a default (`Empty` prefixed) implementation. Each enum (`BluetoothAdapter`, `BluetoothDevice`, etc.) will contain only one variant for each targeted platform. See the following `BluetoothAdapter` example:
+There are three supported platforms (Android, Linux, MacOS), on other platforms we fall back to a default (`Empty` prefixed) implementation. Each enum (`BluetoothAdapter`, `BluetoothDevice`, etc.) will contain only one variant for each targeted platform. See the following `BluetoothAdapter` example:
 
 Android:
 ```rust
@@ -30,6 +31,12 @@ Linux:
 ```rust
     pub enum BluetoothAdapter {
         Bluez(Arc<BluetoothAdapterBluez>),
+    }
+```
+MacOS:
+```rust
+    pub enum BluetoothAdapter {
+        Mac(Arc<BluetoothAdapterMac>),
     }
 ```
 
@@ -47,7 +54,7 @@ You will have a platform specific adapter, e.g. on android target, `BluetoothAda
         Ok(BluetoothAdapter::Android(Arc::new(blurdroid_adapter)))
     }
 ```
-On each platform you can call the same functions to reach the same GATT hierarchy elements. The following code can acces the same bluetooth device on both Android, and Linux platforms:
+On each platform you can call the same functions to reach the same GATT hierarchy elements. The following code can access the same bluetooth device on all supported platforms:
 
 ```rust
 use device::{BluetoothAdapter, BluetoothDevice};
@@ -62,7 +69,7 @@ fn main() {
 ```
 
 #### With the *bluetooth-test* feature
-The `bluetooth-test` feature is not a default feature, to use it, append `features = ["bluetooth-test"]`, to the `device` crate dependency in the project's `Cargo.toml`. 
+The `bluetooth-test` feature is not a default feature, to use it, append `features = ["bluetooth-test"]`, to the `device` crate dependency in the project's `Cargo.toml`.
 
 Each enum (`BluetoothAdapter`, `BluetoothDevice`, etc.) will contain one variant of the three possible default target, and a `Mock` variant, which wraps a `Fake` structure.
 
@@ -77,6 +84,13 @@ Linux:
 ```rust
     pub enum BluetoothAdapter {
         Bluez(Arc<BluetoothAdapterBluez>),
+        Mock(Arc<FakeBluetoothAdapter>),
+    }
+```
+Mac:
+```rust
+    pub enum BluetoothAdapter {
+        Mac(Arc<BluetoothAdapterMac>),
         Mock(Arc<FakeBluetoothAdapter>),
     }
 ```
