@@ -6,7 +6,7 @@ authors = ["The Servo Project Developers"]
 [features]
 default = ["bluetooth"]
 bluetooth = ["blurz", "blurdroid", "blurmac"]
-bluetooth-test = ["blurmock"]
+mock = ["blurmock"]
 
 [lib]
 name = "servo_bluetooth"
